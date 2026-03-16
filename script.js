@@ -1,13 +1,24 @@
 (function() {
 	var RealWebSocket = window.WebSocket;
-	var patternStrings = window.BLOCKED_WS_PATTERNS || [];
-	var patterns = patternStrings.map(function(p) {
-		try { return new RegExp(p); } catch (e) { return null; }
-	}).filter(Boolean);
+
+	function getPatterns() {
+		// Re-read each time in case storage loaded after first check
+		try {
+			var data = document.documentElement.dataset.wsBlockPatterns;
+			if (!data) return [];
+			var arr = JSON.parse(data);
+			return arr.map(function(p) {
+				try { return new RegExp(p); } catch (e) { return null; }
+			}).filter(Boolean);
+		} catch (e) {
+			return [];
+		}
+	}
 
 	function isBlocked(url) {
-		for (var i = 0; i < patterns.length; i++) {
-			if (patterns[i].test(url)) return true;
+		var p = getPatterns();
+		for (var i = 0; i < p.length; i++) {
+			if (p[i].test(url)) return true;
 		}
 		return false;
 	}
