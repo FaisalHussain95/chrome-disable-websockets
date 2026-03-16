@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		body { width: 350px; padding: 12px; font-family: system-ui, sans-serif; font-size: 13px; }
+		h3 { margin: 0 0 12px 0; font-size: 14px; }
+		.section { margin-bottom: 16px; }
+		label { display: block; margin-bottom: 4px; font-weight: 500; }
+		input[type="text"] { width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: monospace; }
+		button { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
+		.btn-primary { background: #0066cc; color: white; }
+		.btn-danger { background: #cc3333; color: white; }
+		.btn-secondary { background: #666; color: white; }
+		#testResult { margin-top: 8px; padding: 8px; border-radius: 4px; display: none; }
+		#testResult.match { background: #d4edda; color: #155724; display: block; }
+		#testResult.nomatch { background: #f8d7da; color: #721c24; display: block; }
+		#testResult.error { background: #fff3cd; color: #856404; display: block; }
+		#patterns { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; }
+		#patterns li { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; background: #f5f5f5; margin-bottom: 4px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+		#patterns li button { padding: 2px 8px; }
+		.empty { color: #999; font-style: italic; }
+		.row { display: flex; gap: 8px; }
+		.row input { flex: 1; }
+	</style>
+</head>
+<body>
+	<h3>WebSocket Blocker</h3>
+
+	<div class="section">
+		<label>Test Regex</label>
+		<input type="text" id="testRegex" placeholder="wss?:\/\/example\.com">
+		<div style="margin-top: 8px;">
+			<label>Test URL</label>
+			<input type="text" id="testUrl" placeholder="wss://example.com/socket">
+		</div>
+		<div style="margin-top: 8px;">
+			<button class="btn-secondary" id="testBtn">Test</button>
+			<button class="btn-primary" id="addBtn">Add Pattern</button>
+		</div>
+		<div id="testResult"></div>
+	</div>
+
+	<div class="section">
+		<label>Blocked Patterns</label>
+		<ul id="patterns"></ul>
+	</div>
+
+	<script src="popup.js"></script>
+</body>
+</html>

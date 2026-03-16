@@ -1,4 +1,17 @@
 (function() {
+	var RealWebSocket = window.WebSocket;
+	var patternStrings = window.BLOCKED_WS_PATTERNS || [];
+	var patterns = patternStrings.map(function(p) {
+		try { return new RegExp(p); } catch (e) { return null; }
+	}).filter(Boolean);
+
+	function isBlocked(url) {
+		for (var i = 0; i < patterns.length; i++) {
+			if (patterns[i].test(url)) return true;
+		}
+		return false;
+	}
+
 	function FakeWebSocket(url, protocols) {
 		this.url = url;
 		this.readyState = 0;
@@ -11,6 +24,7 @@
 			this.readyState = 1;
 			this._emit('open', new Event('open'));
 		}, 0);
+		console.log('WebSocket blocked:', url);
 	}
 	FakeWebSocket.prototype._emit = function(type, event) {
 		if (this['on' + type]) this['on' + type](event);
@@ -39,6 +53,14 @@
 	FakeWebSocket.CLOSING = 2;
 	FakeWebSocket.CLOSED = 3;
 
-	window.WebSocket = FakeWebSocket;
-	console.log('WebSocket support disabled');
+	window.WebSocket = function(url, protocols) {
+		if (isBlocked(url)) {
+			return new FakeWebSocket(url, protocols);
+		}
+		return new RealWebSocket(url, protocols);
+	};
+	window.WebSocket.CONNECTING = 0;
+	window.WebSocket.OPEN = 1;
+	window.WebSocket.CLOSING = 2;
+	window.WebSocket.CLOSED = 3;
 })();
