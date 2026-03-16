@@ -31,6 +31,10 @@
 		this.extensions = '';
 		this.protocol = typeof protocols === 'string' ? protocols : (protocols?.[0] || '');
 		this.binaryType = 'blob';
+		this.onopen = null;
+		this.onclose = null;
+		this.onerror = null;
+		this.onmessage = null;
 		this._listeners = { open: [], close: [], error: [], message: [] };
 		var self = this;
 		setTimeout(function() {
