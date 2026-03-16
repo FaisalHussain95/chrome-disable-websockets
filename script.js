@@ -40,10 +40,6 @@
 		console.log('WebSocket blocked:', url);
 	}
 
-	// Inherit from RealWebSocket.prototype for instanceof checks
-	FakeWebSocket.prototype = Object.create(RealWebSocket.prototype);
-	FakeWebSocket.prototype.constructor = FakeWebSocket;
-
 	FakeWebSocket.prototype._emit = function(type, event) {
 		if (this['on' + type]) this['on' + type](event);
 		var listeners = this._listeners[type].slice();
@@ -72,6 +68,10 @@
 		this._emit(event.type, event);
 		return true;
 	};
+	FakeWebSocket.CONNECTING = 0;
+	FakeWebSocket.OPEN = 1;
+	FakeWebSocket.CLOSING = 2;
+	FakeWebSocket.CLOSED = 3;
 
 	// Proxy constructor
 	var ProxyWebSocket = function(url, protocols) {
