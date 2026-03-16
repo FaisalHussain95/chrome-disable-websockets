@@ -1,18 +1,27 @@
 (function() {
 	function FakeWebSocket(url, protocols) {
 		this.url = url;
-		this.readyState = 3; // CLOSED
+		this.readyState = 0; // CONNECTING
 		this.bufferedAmount = 0;
 		this.extensions = '';
-		this.protocol = '';
+		this.protocol = typeof protocols === 'string' ? protocols : (protocols?.[0] || '');
 		this.binaryType = 'blob';
+		this.onopen = null;
+		this.onclose = null;
+		this.onerror = null;
+		this.onmessage = null;
 		setTimeout(() => {
-			if (this.onerror) this.onerror(new Event('error'));
-			if (this.onclose) this.onclose(new CloseEvent('close', { code: 1006, reason: 'WebSocket disabled' }));
+			this.readyState = 1; // OPEN
+			if (this.onopen) this.onopen(new Event('open'));
 		}, 0);
 	}
-	FakeWebSocket.prototype.send = function() {};
-	FakeWebSocket.prototype.close = function() {};
+	FakeWebSocket.prototype.send = function() { this.bufferedAmount = 0; };
+	FakeWebSocket.prototype.close = function(code, reason) {
+		this.readyState = 3; // CLOSED
+		if (this.onclose) this.onclose(new CloseEvent('close', { code: code || 1000, reason: reason || '' }));
+	};
+	FakeWebSocket.prototype.addEventListener = function(type, fn) { this['on' + type] = fn; };
+	FakeWebSocket.prototype.removeEventListener = function(type, fn) { if (this['on' + type] === fn) this['on' + type] = null; };
 	FakeWebSocket.CONNECTING = 0;
 	FakeWebSocket.OPEN = 1;
 	FakeWebSocket.CLOSING = 2;
